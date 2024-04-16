@@ -161,4 +161,62 @@ window.addEventListener("DOMContentLoaded", () => {
         21,
         ".menu .container"
     ).render();
-});
+
+    // Формы
+
+    const forms = document.querySelectorAll("form");
+    const message = {
+        loading: "Загрузка",
+        success: "Спасибо",
+        failure: "Что-то пошло не так"
+    }
+
+    forms.forEach(form => {
+        responceData(form);
+    })
+
+    function responceData(form){
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            
+            const status = document.querySelectorAll(".status")
+
+            if (status.length){
+                status.forEach(elem => {
+                    form.reset()
+                    elem.textContent = "Вы уже отправили запрос"
+                })
+                return
+            } else {
+
+                const statusMessage = document.createElement("div");
+                statusMessage.classList.add("status");
+                statusMessage.textContent = message.loading;
+
+                form.append(statusMessage);
+
+                const request = new XMLHttpRequest();
+                request.open("GET", "https://api.agify.io/?name=ilya")
+                request.send()
+
+                request.addEventListener("load", () => {
+                    if (200 >= request.status <= 205){
+                        console.log(JSON.parse(request.response))
+                        statusMessage.textContent = message.success
+
+                        form.reset()
+                    } else {
+                        console.log(request.status)
+                    }
+                })
+            }
+        })
+    }
+    function showThanksModal(){
+     const prevModalDialog = document.querySelector(".modal__dialog");
+     console.log(prevModalDialog)   
+    }
+
+    
+}
+);
